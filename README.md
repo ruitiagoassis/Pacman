@@ -1,6 +1,6 @@
 # Pacman
 
-Primeira versao do pacman.
+Vers„o 2 do Pacman
 
 Rewards:
 
@@ -8,4 +8,6 @@ coins : +0.5
 
 morte : -1
 
-n√£o comer coins : -0.001
+permanecer no mesmo local : -0.3
+
+aproximar-se de coins : 0.1

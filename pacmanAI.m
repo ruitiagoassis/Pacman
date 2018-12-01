@@ -29,13 +29,15 @@ global first_game_over
 persistent q_value
 persistent q_value_anterior
 persistent estado_anterior
-% persistent distancia_anterior_proxima_moeda
+persistent distancia_anterior_proxima_moeda
 % persistent distancia_minima_fantasmas_anterior
 persistent accao
 persistent accao_anterior
 persistent alfa % Learning Rate
 persistent gamma % Discount Rate
 persistent posicao_anterior
+
+
 
 % if isempty(distancia_minima_fantasmas_anterior)
 %     distancia_minima_fantasmas_anterior = 999;
@@ -49,12 +51,12 @@ q_value_anterior = q_value;
 
 % Calcular distância à coin mais próxima
 
-% distancia_moeda = zeros(1,size(coins.data,1));
-% for i=1:size(coins.data,1)
-%     distancia_moeda(i) = abs(pacman.pos(1)-coins.data(i,1))+abs(pacman.pos(2)-coins.data(i,2));
-% end
-% 
-% distancia_proxima_moeda = min(distancia_moeda);
+distancia_moeda = zeros(1,size(coins.data,1));
+for i=1:size(coins.data,1)
+    distancia_moeda(i) = abs(pacman.pos(1)-coins.data(i,1))+abs(pacman.pos(2)-coins.data(i,2));
+end
+
+distancia_proxima_moeda = min(distancia_moeda);
 
 % Verificar se o Pacman se está a aproximar de fantasmas.
 % distancia_fantasmas = zeros(1,4);
@@ -71,11 +73,21 @@ q_value_anterior = q_value;
 % coin ou da morte, antes de voltar a fornecer reward baseado na distância
 % à próxima moeda
 % 
-% if reward ~= 0.5*max_reward && reward ~= -10
-%         reward = -0.001*max_reward;
-% end
+
+if isempty(posicao_anterior)
+    posicao_anterior = pacman.pos;
+end
+
+if reward ~= 0.5*max_reward && reward ~= -max_reward
+        if posicao_anterior == pacman.pos
+            reward = -0.3 * max_reward;
+        elseif distancia_anterior_proxima_moeda > distancia_proxima_moeda
+            reward = 0.1* max_reward;
+        end
+end
+posicao_anterior = pacman.pos;
 % 
-% distancia_anterior_proxima_moeda = distancia_proxima_moeda;
+distancia_anterior_proxima_moeda = distancia_proxima_moeda;
 
 
 
@@ -170,7 +182,7 @@ end
 estado_anterior = estado;
 % Reset à reward para poder ser alterada após a decisão, caso a acção
 % anterior tenha sido comer uma coin ou morrer
-if reward == 0.5*max_reward || reward == -10
+if reward == 0.5*max_reward || reward == -max_reward
     reward =0;
     
 end
