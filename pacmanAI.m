@@ -35,6 +35,7 @@ persistent accao
 persistent accao_anterior
 persistent alfa % Learning Rate
 persistent gamma % Discount Rate
+persistent posicao_anterior
 
 % if isempty(distancia_minima_fantasmas_anterior)
 %     distancia_minima_fantasmas_anterior = 999;
