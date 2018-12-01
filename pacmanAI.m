@@ -70,9 +70,9 @@ q_value_anterior = q_value;
 % coin ou da morte, antes de voltar a fornecer reward baseado na distância
 % à próxima moeda
 % 
-% if reward ~= 0.5*max_reward && reward ~= -10
-%         reward = -0.001*max_reward;
-% end
+if reward ~= 0.5*max_reward && reward ~= -max_reward
+        reward = -0.1*max_reward;
+end
 % 
 % distancia_anterior_proxima_moeda = distancia_proxima_moeda;
 
@@ -169,7 +169,7 @@ end
 estado_anterior = estado;
 % Reset à reward para poder ser alterada após a decisão, caso a acção
 % anterior tenha sido comer uma coin ou morrer
-if reward == 0.5*max_reward || reward == -10
+if reward == 0.5*max_reward || reward == -max_reward
     reward =0;
     
 end

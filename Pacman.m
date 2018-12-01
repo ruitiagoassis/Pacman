@@ -58,18 +58,19 @@ pontuacao = [];
 reward_history = 0;
 
 % if ~exist('net_mapa','var') && ~exist('net_decisao','var') & ~exist('mem','var')
-    load('net_mapa','net_mapa');
-% load('redes e memoria mapa.mat')    
-    first_game_over = 1;
+% load('net_mapa','net_mapa');
+load('redes e memoria mapa.mat')
+first_game_over = 1;
 % else
 %     first_game_over = 0;
 %     mem=[0 0];
 %     net_mapa = selforgmap([20 20]);
 %     net_mapa.inputs{1}.size=2;
-    net_decisao = patternnet([20 10]);
-    net_decisao.layers{3}.dimensions=5;
-    net_decisao.layers{3}.transferFcn = 'tansig';
-    net_decisao.inputs{1}.size=400;
+% net_decisao.trainParam.showWindow = false;
+% net_decisao = patternnet([20 10]);
+% net_decisao.layers{3}.dimensions=5;
+% net_decisao.layers{3}.transferFcn = 'tansig';
+% net_decisao.inputs{1}.size=400;
 % % end
 
 max_reward = 1;
@@ -86,7 +87,7 @@ grumpyTime = 700;           % time-increments that ghosts stay grumpy for (defau
 grumpyTimeSwitch = 200;     % time-increments that grumpy ghosts show that they are going to turn normal again (default: 200)
 newEnemyTime = 500;         % time-increments that pass before the next ghost is let out of his cage (default: 500)
 fruitAppear = [300,1500];   % time frame in whih fruits are to appear in the game (default: between 300 and 1500 time-increments after level start)
-game.speed = 0.001;         % game speed (time-increment between two frames) maximum possible without lag on my machine: 0.008
+game.speed = 0.008;         % game speed (time-increment between two frames) maximum possible without lag on my machine: 0.008
 game.faster = -0.001;       % make game faster every level by this amount (default: -0.001)
 game.maxSpeed = 0.005;      % maximimum game speed (default: 0.01)
 AI.init = 0.0;              % initial AI-> 0: (almost) no randomness, 1: full randomness
@@ -391,7 +392,7 @@ pacmanLabyCreator_Fig = figure('Visible','off');
         fruitsFun
         coinsFun
         ghostTimerFun
-        reward_history = reward_history + reward
+        reward_history = reward_history + reward;
         versao = versao +1;
         mem = [mem ; pacman.pos];
     end
