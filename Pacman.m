@@ -51,6 +51,10 @@ global versao
 global reward_history
 global historico_reward
 global iteracao
+global historico_estado
+global historico_q_value
+historico_estado = [];
+historico_q_value = [];
 historico_reward = [];
 iteracao = [];
 versao = 1;
@@ -58,8 +62,8 @@ pontuacao = [];
 reward_history = 0;
 
 % if ~exist('net_mapa','var') && ~exist('net_decisao','var') & ~exist('mem','var')
-% load('net_mapa','net_mapa');
-load('redes e memoria mapa.mat')
+load('net_mapa','net_mapa');
+% load('redes e memoria mapa.mat')
 first_game_over = 1;
 % else
 %     first_game_over = 0;
@@ -67,10 +71,14 @@ first_game_over = 1;
 %     net_mapa = selforgmap([20 20]);
 %     net_mapa.inputs{1}.size=2;
 % net_decisao.trainParam.showWindow = false;
-% net_decisao = patternnet([20 10]);
-% net_decisao.layers{3}.dimensions=5;
-% net_decisao.layers{3}.transferFcn = 'tansig';
-% net_decisao.inputs{1}.size=400;
+
+net_decisao = patternnet([20 10]);
+net_decisao.performFcn = 'mse';
+net_decisao.trainFcn = 'trainscg';
+net_decisao.layers{3}.dimensions=5;
+net_decisao.layers{3}.transferFcn = 'tansig';
+net_decisao.inputs{1}.size=400;
+net_decisao = init(net_decisao);
 % % end
 
 max_reward = 1;
@@ -487,6 +495,7 @@ pacmanLabyCreator_Fig = figure('Visible','off');
         
         if isempty(coins.data) % next Level
             level.data = level.data+1;
+            reward = max_reward;
             set(level.plot,'String',['Level: ' num2str(level.data)]);
             game.speed = game.speed+game.faster;
             if game.speed < game.maxSpeed
@@ -683,6 +692,7 @@ pacmanLabyCreator_Fig = figure('Visible','off');
                 set(showHighScoresButton,'Visible','on')
                 [mem,net_mapa] = updateAndTrain(mem,net_mapa);
                 first_game_over = 1;
+                net_decisao = train(net_decisao,historico_estado,historico_q_value,'UseGPU','only');
                 save('redes e memoria mapa','net_mapa','net_decisao','mem')
                 historico_reward = [historico_reward reward_history];
                 iteracao = [iteracao versao];

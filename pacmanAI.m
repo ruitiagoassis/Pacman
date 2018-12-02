@@ -24,6 +24,8 @@ global net_mapa
 global reward
 global max_reward
 global first_game_over
+global historico_estado
+global historico_q_value
 
 %% Persistent Variables
 persistent q_value
@@ -42,7 +44,13 @@ persistent gamma % Discount Rate
 alfa = 0.1;
 gamma = 0.9;
 accao_anterior = accao;
+
+
 q_value_anterior = q_value;
+
+if isempty(q_value_anterior)
+    q_value_anterior = [0;0;0;0;0];
+end
 
 %% Rewards
 
@@ -70,7 +78,7 @@ q_value_anterior = q_value;
 % coin ou da morte, antes de voltar a fornecer reward baseado na distância
 % à próxima moeda
 % 
-if reward ~= 0.5*max_reward && reward ~= -max_reward
+if reward ~= 0.5*max_reward && reward ~= -max_reward && reward ~= 0.6*max_reward && reward ~= max_reward
         reward = -0.1*max_reward;
 end
 % 
@@ -130,18 +138,22 @@ end
 % distancia_minima_fantasmas_anterior = distancia_minima_fantasmas;
 
 pos_fantasmas = pos_fantasmas.*estado_fantasmas;
-estado = [4*pos_pacman,pos_fantasmas,pos_moedas,3*pos_pills];
+estado = [4*pos_pacman,pos_fantasmas,pos_moedas,2*pos_pills];
 estado = max(estado,[],2);
 
 if isempty(estado_anterior)
     estado_anterior = estado;
 end
+
 if ~first_game_over
     accao = randi([1 5]);
     accao_1 = accao;
 else
     q_value = sim(net_decisao,estado);
     
+    if isnan(q_value)
+       q_value = [1;0;0;0;0] 
+    end
     random_or_net = randi([0 1]);
     
     if ~random_or_net
@@ -169,7 +181,7 @@ end
 estado_anterior = estado;
 % Reset à reward para poder ser alterada após a decisão, caso a acção
 % anterior tenha sido comer uma coin ou morrer
-if reward == 0.5*max_reward || reward == -max_reward
+if reward == 0.5*max_reward || reward == -max_reward || reward == 0.6*max_reward || reward == max_reward
     reward =0;
     
 end
@@ -180,7 +192,7 @@ pause(0.0000001)
         
         q_value_anterior(accao_anterior)=q_value_melhor;
         
-        net_decisao = adapt(net_decisao,estado_anterior,q_value_anterior);
+        [net_decisao,q_value] = adapt(net_decisao,estado_anterior,q_value_anterior);
         
     end
 
@@ -190,4 +202,8 @@ pause(0.0000001)
         
         
     end
+
+historico_estado = [historico_estado,estado_anterior];
+historico_q_value = [historico_q_value,q_value_anterior];
+
 end
