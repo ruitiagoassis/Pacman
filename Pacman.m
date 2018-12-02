@@ -51,10 +51,6 @@ global versao
 global reward_history
 global historico_reward
 global iteracao
-global historico_estado
-global historico_q_value
-historico_estado = [];
-historico_q_value = [];
 historico_reward = [];
 iteracao = [];
 versao = 1;
@@ -70,11 +66,13 @@ first_game_over = 1;
 %     mem=[0 0];
 %     net_mapa = selforgmap([20 20]);
 %     net_mapa.inputs{1}.size=2;
-% net_decisao.trainParam.showWindow = false;
+
 
 net_decisao = patternnet([20 10]);
 net_decisao.performFcn = 'mse';
 net_decisao.trainFcn = 'trainscg';
+net_decisao.trainParam.showWindow = false;
+net_decisao.trainParam.max_fail=10;
 net_decisao.layers{3}.dimensions=5;
 net_decisao.layers{3}.transferFcn = 'tansig';
 net_decisao.inputs{1}.size=400;
@@ -691,12 +689,11 @@ pacmanLabyCreator_Fig = figure('Visible','off');
                 set(createLabyButton,'Visible','on')
                 set(showHighScoresButton,'Visible','on')
                 [mem,net_mapa] = updateAndTrain(mem,net_mapa);
-                first_game_over = 1;
-                net_decisao = train(net_decisao,historico_estado,historico_q_value,'UseGPU','only');
-                save('redes e memoria mapa','net_mapa','net_decisao','mem')
+                first_game_over = 1; 
                 historico_reward = [historico_reward reward_history];
                 iteracao = [iteracao versao];
                 pontuacao = [pontuacao score.data];
+                save('redes e memoria mapa','net_mapa','net_decisao','mem')
                 save('Reward history','historico_reward')
                 save('Numero de Iteracoes','iteracao')
                 save('historico de pontuacao','pontuacao')

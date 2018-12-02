@@ -24,8 +24,14 @@ global net_mapa
 global reward
 global max_reward
 global first_game_over
-global historico_estado
-global historico_q_value
+persistent state_memory
+persistent q_value_memory
+if isempty(state_memory)
+    state_memory = zeros(400,100000);
+end
+if isempty(q_value_memory)
+    q_value_memory = zeros(5,100000);
+end
 
 %% Persistent Variables
 persistent q_value
@@ -151,9 +157,6 @@ if ~first_game_over
 else
     q_value = sim(net_decisao,estado);
     
-    if isnan(q_value)
-       q_value = [1;0;0;0;0] 
-    end
     random_or_net = randi([0 1]);
     
     if ~random_or_net
@@ -178,6 +181,9 @@ else
         aprendizagem(max(q_value));
     end
 end
+state_memory = [state_memory(:,2:end) estado_anterior];
+q_value_memory = [q_value_memory(:,2:end) q_value_anterior];
+
 estado_anterior = estado;
 % Reset à reward para poder ser alterada após a decisão, caso a acção
 % anterior tenha sido comer uma coin ou morrer
@@ -185,14 +191,16 @@ if reward == 0.5*max_reward || reward == -max_reward || reward == 0.6*max_reward
     reward =0;
     
 end
-pause(0.0000001)
+
+
     function aprendizagem(max_q_value)
         
         q_value_melhor = updateQValue(q_value_anterior(accao_anterior),max_q_value);
         
         q_value_anterior(accao_anterior)=q_value_melhor;
         
-        [net_decisao,q_value] = adapt(net_decisao,estado_anterior,q_value_anterior);
+        sample = randi([1 100000],[1 3000]);
+        net_decisao = train(net_decisao,state_memory(:,sample),q_value_memory(:,sample),'UseParallel','yes');
         
     end
 
@@ -203,7 +211,6 @@ pause(0.0000001)
         
     end
 
-historico_estado = [historico_estado,estado_anterior];
-historico_q_value = [historico_q_value,q_value_anterior];
+
 
 end
