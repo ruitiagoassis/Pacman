@@ -263,7 +263,7 @@ pacman.targetPlot = patch('XData',ghostMode.form(1,:),'YData',ghostMode.form(2,:
 pacman.curAutoDir = [1 0];
 
 %% lives, score, level, info, animations...
-lives.orig = 2;             % lives of pacman
+lives.orig = 0;             % lives of pacman
 lives.data = lives.orig;    % remember default lives of pacman         
 lives.plot = gobjects(1,lives.data);
 for ii = 1:lives.data
@@ -389,16 +389,16 @@ pacmanLabyCreator_Fig  = figure('Visible','off');
         robot.mouseRelease(java.awt.event.InputEvent.BUTTON1_MASK);
         
         % MÁRIO CODE Episode Initializations
-        set(info.text,'Visible','off')
         frametime = 7;
         idFrames = 1;
         epiLabel = 0;
+        %score.data = 0;
         Tuples = repmat(Tuple,ceil(num_Steps/staterate),1);
         Tuples(1).Frames(:,:,1:4)=repmat(captureFrame,1,1,4);
         Tuples(1).action=pacman.oldDir;
         
         newGame
-%         set(info.text,'Visible','off')
+        set(info.text,'Visible','off')
     end
 
     function createGhostsFun
@@ -449,7 +449,6 @@ pacmanLabyCreator_Fig  = figure('Visible','off');
             end
         end
         frametime=frametime+1;
-        episodetime=episodetime+1;
     end
 
     function musicOnOff
@@ -530,8 +529,8 @@ pacmanLabyCreator_Fig  = figure('Visible','off');
 %         epiLabel = 0;
 %         %score.data = 0;
 %         Tuples = repmat(Tuple,ceil(num_Steps/staterate),1);
-         Tuples(ceil(frametime/staterate)).Frames(:,:,1:4)=repmat(captureFrame,1,1,4);
-         Tuples(ceil(frametime/staterate)).action=pacman.oldDir;
+%         Tuples(1).Frames(:,:,1:4)=repmat(captureFrame,1,1,4);
+         Tuples(ceil).action=pacman.oldDir;
         episodetime = 1;
 
         start(myTimer)
@@ -758,7 +757,7 @@ pacmanLabyCreator_Fig  = figure('Visible','off');
             %%
             
             %MÁRIO CODE Infinite Episodes
-             stop(myTimer)
+%             stop(myTimer)
 %             epsilon = min_epsilon + (max_epsilon - min_epsilon)*exp(-decay_rate*NEpisode) ;
 %             finishEpisode;
 %             coins.data = coins.originalData;
@@ -769,8 +768,6 @@ pacmanLabyCreator_Fig  = figure('Visible','off');
                 set(lives.plot(lives.data+1),'Visible','off')
                 newGame
             else % Game Over
-                epsilon = min_epsilon + (max_epsilon - min_epsilon)*exp(-decay_rate*NEpisode) ;
-                finishEpisode;
                 newGameButtonFun
 %                set(info.text,'Visible','on','String','Game Over', 'Color','r')
 %                 stop(myTimer)

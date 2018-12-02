@@ -1,13 +1,17 @@
 function pacmanGhostCreator_Fig = ghostCreator(myFig)
+
 % Pacman Ghost Creator
 %
 % Programmer:   Markus Petershofen
 % Date:         15.04.2017
+
+
 % create figure
 screen_size = get(0,'ScreenSize');                  % get screen size
 figure_size = [1200 600];                           % figure-size
 limit_left = screen_size(3)/2-figure_size(1)/2;     % figure centered horizontally
 limit_down = screen_size(4)/2-figure_size(2)/2;     % figure centered vertically
+
 if nargin == 1
     pacmanGhostCreator_Fig = myFig;
     set(pacmanGhostCreator_Fig,'units','pixels','Position',[limit_left limit_down figure_size(1) figure_size(2)],...  
@@ -23,18 +27,24 @@ else
         'CloseRequestFcn',@(s,e)PacmanCloseFcn,...
         'WindowButtonMotionFcn',@myMotionFcn,'WindowButtonUpFcn',@myButtonUp);
 end
+
 clc
+
 myAxes1 = axes('Units','normalized','Position',[0.3 0.5 0.4 0.4],...                                            
     'XLim',[-2 2],'YLim',[-2 2],'parent',pacmanGhostCreator_Fig);
 hold(myAxes1,'on')
 axis(myAxes1,'equal','off')
+
 gameData = load('gameData.mat');
+
 allSprites = gameData.gameData.allSprites;
 grumpySprites = allSprites.grumpy;
+
 colorPaletteAxes =  axes('Units','normalized','Position',[0.05 0.55 0.2 0.4],...                                            
     'XLim',[-0.1 1.1],'YLim',[-0.1 1.1],'parent',pacmanGhostCreator_Fig);
 hold(colorPaletteAxes,'on')
 axis(colorPaletteAxes,'off')
+
 ghostAxes(1) =  axes('Units','normalized','Position',[0.05 0.1 0.2 0.4],...                                            
     'XLim',[0 1],'YLim',[0 1],'parent',pacmanGhostCreator_Fig);
 hold(ghostAxes(1),'on')
@@ -51,6 +61,7 @@ ghostAxes(4) =  axes('Units','normalized','Position',[0.74 0.1 0.2 0.4],...
     'XLim',[0 1],'YLim',[0 1],'parent',pacmanGhostCreator_Fig);
 hold(ghostAxes(4),'on')
 axis(ghostAxes(4),'on')
+
 myColors = cell(8,8);
 curColor = 1;
 for jj = 1:8
@@ -59,9 +70,11 @@ for jj = 1:8
         curColor = curColor + 1;
     end
 end
+
 colorMatrix = reshape(linspace(1,64,64),8,8);
 imagesc(myAxes1,'XData',[0 0.001],'YData',[0.001 0],'CData',colorMatrix,'Visible','on');
 colormap(allSprites.colormap)
+
 % colorMatrix(8,1) % white
 % colorMatrix(8,2) % red
 % colorMatrix(8,3) % magenta
@@ -70,6 +83,7 @@ colormap(allSprites.colormap)
 % colorMatrix(8,6) % blue
 % colorMatrix(1,1) % black
 % colorMatrix(5,1) % grey
+
 patch([-0.1 -0.1 1.1 1.1],[1.1 -0.1 -0.1 1.1],'w','Parent',colorPaletteAxes)
 patch([-0.05 -0.05 1.05 1.05],[1.05 -0.05 -0.05 1.05],'k','Parent',colorPaletteAxes)
 colorPicker.plot = gobjects(8,8);
@@ -78,12 +92,14 @@ for kk = 1:8
         colorPicker.plot(kk,mm) = patch([mm/8 mm/8 (mm-1)/8 (mm-1)/8],1-[kk/8 (kk-1)/8 (kk-1)/8 kk/8],myColors{kk,mm},'Parent',colorPaletteAxes,'FaceAlpha',1,'EdgeColor',myColors{kk,mm},'LineWidth',2,'ButtonDownFcn',{@colorPickerFun,kk,mm});
     end
 end
+
 colorPicker.text = gobjects(1,4);
 colorPicker.nicknames = {'B','P','I','C'};
 for kk = 1:4
     colorPicker.text(kk,1) = text((2*(kk+1)-1)/16-0.015,1-(2*8-1)/16+0.015,colorPicker.nicknames{kk},'Color','k','Parent',colorPaletteAxes,'Visible','on','FontSize',14,'horizontalAlignment','Center');
     colorPicker.text(kk,2) = text((2*(kk+1)-1)/16-0.01,1-(2*8-1)/16+0.01,colorPicker.nicknames{kk},'Color','w','Parent',colorPaletteAxes,'Visible','on','FontSize',14,'horizontalAlignment','Center');
 end
+
 currentGhost = 1;
 ghostBG = uibuttongroup('Visible','on',...
                   'Position',[0.3 0.85 .4 0.1],...
@@ -248,6 +264,7 @@ uicontrol('Style','radiobutton',...
           'Tag','3',...
           'HandleVisibility','off',...
           'Parent',chosenColorBG);  
+
 uicontrol('Style','pushbutton',...
           'units','normalized',...
           'String','Save Data',...
@@ -267,6 +284,7 @@ uicontrol('Style','pushbutton',...
           'Position',[0.25 0.55 0.025 0.4],...
           'Parent',pacmanGhostCreator_Fig,...
           'Callback',@(s,e)NewColorMapFun);
+
 animationButton = uicontrol('Style','togglebutton',...
           'units','normalized',...
           'String','Animation',...
@@ -289,13 +307,17 @@ for ii = 1:4
     set(colorPicker.text(ii,1),'Position',[(2*tcol-1)/16-0.015,1-(2*trow-1)/16+0.02,0],'Visible','on')
     set(colorPicker.text(ii,2),'Position',[(2*tcol-1)/16-0.01,1-(2*trow-1)/16+0.015,0],'Visible','on')
 end
+
 eyes.whiteColor = colorMatrix(8,1);
 eyes.pupilColor = colorMatrix(8,6);
+
 curRow = 8;
 curCol = 2;
+
 chosenFrame = 1;
 chosenDirectionFrame = 1;
 chosenBodyEyeIris = 1;
+
 ghost.paintPlot = gobjects(4,14,14);
 for ii = 1:4
     for kk = 1:14
@@ -308,9 +330,12 @@ for ii = 1:4
         end
     end
 end
+
 loopFlag = 1;
 clickedAxes = 0;
 animationLoop
+
+
     function animationLoop
         while loopFlag && get(animationButton,'Value')
             for rr = currentGhost
@@ -326,6 +351,7 @@ animationLoop
             end
         end
     end
+
     function paintFun(~,~,myAx,row,col)
         clickedAxes = myAx;
         switch pacmanGhostCreator_Fig.SelectionType
@@ -361,6 +387,7 @@ animationLoop
         end
         refreshAllPlots
     end
+
     function refreshAllPlots
         if chosenDirectionFrame <= 4
             for rr = 1:4
@@ -390,6 +417,7 @@ animationLoop
             end
         end
     end
+
     function ghostSelection(src,~)
         currentGhost = str2double(src.SelectedObject.Tag);
         loopFlag = 0;
@@ -399,10 +427,12 @@ animationLoop
         end
         animationLoop
     end
+
     function chosenFrameSelection(src,~)
         chosenFrame = str2double(src.SelectedObject.Tag);
         refreshAllPlots
     end
+
     function directionFrameSelection(src,~)
         chosenDirectionFrame = str2double(src.SelectedObject.Tag);
         loopFlag = 0;
@@ -412,6 +442,7 @@ animationLoop
             animationLoop
         end
     end
+
     function chosenColorSelection(src,~)
         chosenBodyEyeIris = str2double(src.SelectedObject.Tag);
     end
@@ -434,6 +465,7 @@ animationLoop
             ghost.curColor(currentGhost) = colorMatrix(curRow,curCol);
         end
     end
+
     function myMotionFcn(~,~)
         if clickedAxes > 0            
             curCoord = ghostAxes(clickedAxes).CurrentPoint(1,1:2);
@@ -474,18 +506,23 @@ animationLoop
             end
         end
     end
+
+
     function myButtonUp(~,~)
         clickedAxes = 0;
         refreshAllPlots
     end
+
     function PacmanCloseFcn1
         loopFlag = 0;
         set(pacmanGhostCreator_Fig,'Visible','off')
     end
+
     function PacmanCloseFcn
         loopFlag = 0;
         delete(pacmanGhostCreator_Fig)
     end
+
     function NewColorMapFun
         curColor = 1;
         for ss = 1:8
@@ -502,11 +539,13 @@ animationLoop
         
         refreshAllPlots
     end
+
     function AnimationToggleFun
         if get(animationButton,'Value')
             animationLoop
         end
     end
+
     function SaveDataFun
         % save ghosts
         gameData.gameData.allSprites.colormap = cell2mat(reshape(myColors,64,1));
@@ -537,4 +576,5 @@ animationLoop
         gameData = gameData.gameData;
         uisave('gameData','myOwnGameData')
     end
+
 end
