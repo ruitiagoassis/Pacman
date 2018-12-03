@@ -24,14 +24,8 @@ global net_mapa
 global reward
 global max_reward
 global first_game_over
-persistent state_memory
-persistent q_value_memory
-if isempty(state_memory)
-    state_memory = zeros(400,100000);
-end
-if isempty(q_value_memory)
-    q_value_memory = zeros(5,100000);
-end
+global state_memory
+global q_value_memory
 
 %% Persistent Variables
 persistent q_value
@@ -66,7 +60,7 @@ end
 % for i=1:size(coins.data,1)
 %     distancia_moeda(i) = abs(pacman.pos(1)-coins.data(i,1))+abs(pacman.pos(2)-coins.data(i,2));
 % end
-% 
+%
 % distancia_proxima_moeda = min(distancia_moeda);
 
 % Verificar se o Pacman se está a aproximar de fantasmas.
@@ -74,7 +68,7 @@ end
 % for i=1:4
 %     distancia_fantasmas(i) = abs(pacman.pos(1)-enemies(i).pos(1))+abs(pacman.pos(2)-enemies(i).pos(2));
 % end
-% 
+%
 % distancia_minima_fantasmas = min(distancia_fantasmas);
 % fantasma_mais_proximo = find(distancia_minima_fantasmas == min(distancia_fantasmas));
 % Verifica se a distância à moeda mais próxima aumentou ou diminuiu
@@ -83,11 +77,11 @@ end
 % Caso seja uma destas duas queremos que a rede atualize com a reward da
 % coin ou da morte, antes de voltar a fornecer reward baseado na distância
 % à próxima moeda
-% 
+%
 if reward ~= 0.5*max_reward && reward ~= -max_reward && reward ~= 0.6*max_reward && reward ~= max_reward
-        reward = -0.1*max_reward;
+    reward = -0.1*max_reward;
 end
-% 
+%
 % distancia_anterior_proxima_moeda = distancia_proxima_moeda;
 
 
@@ -191,7 +185,7 @@ if reward == 0.5*max_reward || reward == -max_reward || reward == 0.6*max_reward
     reward =0;
     
 end
-
+pause(0.000000001)
 
     function aprendizagem(max_q_value)
         
@@ -199,14 +193,25 @@ end
         
         q_value_anterior(accao_anterior)=q_value_melhor;
         
-        sample = randi([1 100000],[1 3000]);
+        sample = randi([1 10000],[1 300]);
         net_decisao = train(net_decisao,state_memory(:,sample),q_value_memory(:,sample),'UseParallel','yes');
         
     end
 
     function q_value_novo = updateQValue(q_value_anterior,max_q_value)
         
-        q_value_novo = q_value_anterior + alfa*(reward + gamma * max_q_value - q_value_anterior);
+        q_value_modifier = alfa*(reward + gamma * max_q_value - q_value_anterior);
+        
+        if q_value_modifier >1
+            
+            q_value_modifier =1;
+        
+        elseif q_value_modifier <-1
+        
+            q_value_modifier = -1;
+            
+        end
+        q_value_novo = q_value_anterior + q_value_modifier;
         
         
     end

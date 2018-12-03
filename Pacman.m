@@ -51,6 +51,10 @@ global versao
 global reward_history
 global historico_reward
 global iteracao
+global state_memory
+global q_value_memory
+q_value_memory = zeros(5,10000);
+state_memory = zeros(400,10000);
 historico_reward = [];
 iteracao = [];
 versao = 1;
@@ -689,7 +693,7 @@ pacmanLabyCreator_Fig = figure('Visible','off');
                 set(createLabyButton,'Visible','on')
                 set(showHighScoresButton,'Visible','on')
                 [mem,net_mapa] = updateAndTrain(mem,net_mapa);
-                first_game_over = 1; 
+                first_game_over = 1;
                 historico_reward = [historico_reward reward_history];
                 iteracao = [iteracao versao];
                 pontuacao = [pontuacao score.data];
@@ -697,6 +701,7 @@ pacmanLabyCreator_Fig = figure('Visible','off');
                 save('Reward history','historico_reward')
                 save('Numero de Iteracoes','iteracao')
                 save('historico de pontuacao','pontuacao')
+                save('state and q_value memory','state_memory','q_value_memory')
                 reward_history = 0;
                 versao = 0;
                 newGameButtonFun
