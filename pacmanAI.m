@@ -205,13 +205,14 @@ pause(0.000000001)
         
         
         
-        time = toc-6
+        time = toc-10;
         if -0.1<time && time<0.1
             
-            sample = randi([1 10000],[1 300]);
+            sample = randi([1 10000],[1 3000]);
             
             net_decisao = train(net_decisao,state_memory(:,sample),q_value_memory(:,sample),'useGPU','only');
             time_memory = 1;
+            
         end
         
         

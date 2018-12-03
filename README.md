@@ -1,6 +1,12 @@
 # Pacman
 
-Primeira versao do pacman.
+Terceira versao do pacman.
+
+treina de 10 em 10 segundos
+
+tem memória maior
+
+faz samples maiores de memória para treinar
 
 Rewards:
 
