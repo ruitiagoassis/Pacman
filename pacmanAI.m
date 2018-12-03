@@ -37,7 +37,16 @@ persistent accao
 persistent accao_anterior
 persistent alfa % Learning Rate
 persistent gamma % Discount Rate
+persistent time_memory
+if isempty(time_memory)
+   tic 
+   time_memory = 0;
+end
 
+if time_memory
+    tic
+    time_memory = 0;
+end
 % if isempty(distancia_minima_fantasmas_anterior)
 %     distancia_minima_fantasmas_anterior = 999;
 % end
@@ -175,6 +184,7 @@ else
         aprendizagem(max(q_value));
     end
 end
+
 state_memory = [state_memory(:,2:end) estado_anterior];
 q_value_memory = [q_value_memory(:,2:end) q_value_anterior];
 
@@ -193,8 +203,17 @@ pause(0.000000001)
         
         q_value_anterior(accao_anterior)=q_value_melhor;
         
-        sample = randi([1 10000],[1 300]);
-        net_decisao = train(net_decisao,state_memory(:,sample),q_value_memory(:,sample),'UseParallel','yes');
+        
+        
+        time = toc-6
+        if -0.1<time && time<0.1
+            
+            sample = randi([1 10000],[1 300]);
+            
+            net_decisao = train(net_decisao,state_memory(:,sample),q_value_memory(:,sample),'useGPU','only');
+            time_memory = 1;
+        end
+        
         
     end
 
@@ -205,9 +224,9 @@ pause(0.000000001)
         if q_value_modifier >1
             
             q_value_modifier =1;
-        
+            
         elseif q_value_modifier <-1
-        
+            
             q_value_modifier = -1;
             
         end

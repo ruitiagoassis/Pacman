@@ -55,6 +55,7 @@ global state_memory
 global q_value_memory
 q_value_memory = zeros(5,10000);
 state_memory = zeros(400,10000);
+load('state and q_value memory.mat');
 historico_reward = [];
 iteracao = [];
 versao = 1;
@@ -62,8 +63,8 @@ pontuacao = [];
 reward_history = 0;
 
 % if ~exist('net_mapa','var') && ~exist('net_decisao','var') & ~exist('mem','var')
-load('net_mapa','net_mapa');
-% load('redes e memoria mapa.mat')
+% load('net_mapa','net_mapa');
+load('redes e memoria mapa.mat')
 first_game_over = 1;
 % else
 %     first_game_over = 0;
@@ -72,15 +73,15 @@ first_game_over = 1;
 %     net_mapa.inputs{1}.size=2;
 
 
-net_decisao = patternnet([20 10]);
-net_decisao.performFcn = 'mse';
-net_decisao.trainFcn = 'trainscg';
+% net_decisao = patternnet([20 10]);
+% net_decisao.performFcn = 'mse';
+% net_decisao.trainFcn = 'trainscg';
 net_decisao.trainParam.showWindow = false;
-net_decisao.trainParam.max_fail=10;
-net_decisao.layers{3}.dimensions=5;
-net_decisao.layers{3}.transferFcn = 'tansig';
-net_decisao.inputs{1}.size=400;
-net_decisao = init(net_decisao);
+% net_decisao.trainParam.max_fail=10;
+% net_decisao.layers{3}.dimensions=5;
+% net_decisao.layers{3}.transferFcn = 'tansig';
+% net_decisao.inputs{1}.size=400;
+% net_decisao = init(net_decisao);
 % % end
 
 max_reward = 1;
