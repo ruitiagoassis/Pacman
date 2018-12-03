@@ -205,7 +205,10 @@ pause(0.000000001)
         
         
         
-        time = toc-6
+        time = toc-6;
+        if time >0.1
+            time = 0;
+        end
         if -0.1<time && time<0.1
             
             sample = randi([1 10000],[1 300]);
