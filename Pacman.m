@@ -53,9 +53,9 @@ global historico_reward
 global iteracao
 global state_memory
 global q_value_memory
-q_value_memory = zeros(5,10000);
-state_memory = zeros(400,10000);
-load('state and q_value memory.mat');
+q_value_memory = zeros(5,50000);
+state_memory = zeros(400,50000);
+% load('state and q_value memory.mat');
 historico_reward = [];
 iteracao = [];
 versao = 1;
