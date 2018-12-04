@@ -1,4 +1,4 @@
-function accao_1 = pacmanAI(pacman,enemies,allDirections,coins,pills)
+function accao_1 = pacmanAI(pacman,enemies,allDirections,coins,pills,lives)
 % targetSquare = pacmanAI(pacman,enemies,allDirections)
 %
 %% Input:
@@ -38,9 +38,14 @@ persistent accao_anterior
 persistent alfa % Learning Rate
 persistent gamma % Discount Rate
 persistent time_memory
+persistent counter
+if isempty(counter)
+    counter = 100000;
+end
+
 if isempty(time_memory)
-   tic 
-   time_memory = 0;
+    tic
+    time_memory = 0;
 end
 
 if time_memory
@@ -160,7 +165,12 @@ if ~first_game_over
 else
     q_value = sim(net_decisao,estado);
     
-    random_or_net = randi([0 1]);
+    % Variação do fator de exploração com o número de vidas restante
+    
+    vetor_perc_random = [4 3 2 1];
+    
+    random_or_net = randi([0 vetor_perc_random(lives.data+1)]);
+    %
     
     if ~random_or_net
         
@@ -185,8 +195,15 @@ else
     end
 end
 
-state_memory = [state_memory(:,2:end) estado_anterior];
-q_value_memory = [q_value_memory(:,2:end) q_value_anterior];
+
+state_memory(:,counter)=estado_anterior;
+q_value_memory(:,counter)=q_value_anterior;
+
+counter = counter -1;
+if counter <1
+    counter = 100000;
+end
+
 
 estado_anterior = estado;
 % Reset à reward para poder ser alterada após a decisão, caso a acção
@@ -211,7 +228,7 @@ pause(0.000000001)
         end
         if -0.1<time && time<0.1
             
-            sample = randi([1 10000],[1 300]);
+            sample = randi([1 100000],[1 3000]);
             
             net_decisao = train(net_decisao,state_memory(:,sample),q_value_memory(:,sample),'useGPU','only');
             time_memory = 1;
