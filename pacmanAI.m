@@ -40,7 +40,7 @@ persistent gamma % Discount Rate
 persistent time_memory
 persistent counter
 if isempty(counter)
-    counter = 100000;
+    counter = 1000000;
 end
 
 if isempty(time_memory)
@@ -201,7 +201,7 @@ q_value_memory(:,counter)=q_value_anterior;
 
 counter = counter -1;
 if counter <1
-    counter = 100000;
+    counter = 1000000;
 end
 
 
@@ -228,7 +228,7 @@ pause(0.000000001)
         end
         if -0.1<time && time<0.1
             
-            sample = randi([1 100000],[1 3000]);
+            sample = randi([1 1000000],[1 30000]);
             
             net_decisao = train(net_decisao,state_memory(:,sample),q_value_memory(:,sample),'useGPU','only');
             time_memory = 1;
