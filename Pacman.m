@@ -41,7 +41,8 @@ close all
 clc
 
 global net_mapa;
-global net_decisao;
+global net_decisao_1;
+global net_decisao_2;
 global mem;
 global reward
 global max_reward
@@ -51,10 +52,16 @@ global versao
 global reward_history
 global historico_reward
 global iteracao
-global state_memory
-global q_value_memory
-q_value_memory = zeros(5,100000);
-state_memory = zeros(400,100000);
+global state_memory_1
+global q_value_memory_1
+global state_memory_2
+global q_value_memory_2
+
+q_value_memory_1 = zeros(5,100000);
+state_memory_1 = zeros(400,100000);
+q_value_memory_2 = zeros(5,100000);
+state_memory_2 = zeros(400,100000);
+
 % load('state and q_value memory.mat');
 historico_reward = [];
 iteracao = [];
@@ -72,18 +79,28 @@ first_game_over = 1;
 %     net_mapa = selforgmap([20 20]);
 %     net_mapa.inputs{1}.size=2;
 
-
-net_decisao = patternnet([20 10]);
-net_decisao.performFcn = 'mse';
-net_decisao.trainFcn = 'trainscg';
-net_decisao.trainParam.showWindow = false;
-net_decisao.trainParam.max_fail=10;
-net_decisao.layers{3}.dimensions=5;
-net_decisao.layers{3}.transferFcn = 'tansig';
-net_decisao.inputs{1}.size=400;
-net_decisao = init(net_decisao);
+%% Criação da Rede Decisao 1
+net_decisao_1 = patternnet([20 10]);
+net_decisao_1.performFcn = 'mse';
+net_decisao_1.trainFcn = 'trainscg';
+net_decisao_1.trainParam.showWindow = false;
+net_decisao_1.trainParam.max_fail=10;
+net_decisao_1.layers{3}.dimensions=5;
+net_decisao_1.layers{3}.transferFcn = 'tansig';
+net_decisao_1.inputs{1}.size=400;
+net_decisao_1 = init(net_decisao_1);
 % % end
-
+%% Criação da Rede Decisão 2
+net_decisao_2 = patternnet([20 10]);
+net_decisao_2.performFcn = 'mse';
+net_decisao_2.trainFcn = 'trainscg';
+net_decisao_2.trainParam.showWindow = false;
+net_decisao_2.trainParam.max_fail=10;
+net_decisao_2.layers{3}.dimensions=5;
+net_decisao_2.layers{3}.transferFcn = 'tansig';
+net_decisao_2.inputs{1}.size=400;
+net_decisao_2 = init(net_decisao_2);
+%%
 max_reward = 1;
 reward = 0;
 
@@ -698,11 +715,12 @@ pacmanLabyCreator_Fig = figure('Visible','off');
                 historico_reward = [historico_reward reward_history];
                 iteracao = [iteracao versao];
                 pontuacao = [pontuacao score.data];
-                save('redes e memoria mapa','net_mapa','net_decisao','mem')
+                save('redes e memoria mapa','net_mapa','net_decisao_1','net_decisao_2')
                 save('Reward history','historico_reward')
                 save('Numero de Iteracoes','iteracao')
                 save('historico de pontuacao','pontuacao')
-                save('state and q_value memory','state_memory','q_value_memory')
+                save('state and q_value memory 1','state_memory_1','q_value_memory_1')
+                save('state and q_value memory 2','state_memory_2','q_value_memory_2')
                 reward_history = 0;
                 versao = 0;
                 newGameButtonFun

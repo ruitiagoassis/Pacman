@@ -19,29 +19,39 @@ function accao_1 = pacmanAI(pacman,enemies,allDirections,coins,pills,lives)
 
 
 %% Global variables
-global net_decisao
+global net_decisao_1
+global net_decisao_2
 global net_mapa
 global reward
 global max_reward
 global first_game_over
-global state_memory
-global q_value_memory
+global state_memory_1
+global q_value_memory_1
+global state_memory_2
+global q_value_memory_2
 
 %% Persistent Variables
-persistent q_value
-persistent q_value_anterior
+persistent q_value_1
+persistent q_value_2
+
+persistent q_value_anterior_1
+persistent q_value_anterior_2
+
 persistent estado_anterior
-persistent distancia_anterior_proxima_moeda
-% persistent distancia_minima_fantasmas_anterior
 persistent accao
 persistent accao_anterior
 persistent alfa % Learning Rate
 persistent gamma % Discount Rate
 persistent time_memory
-persistent counter
+persistent counter_1
+persistent counter_2
 
-if isempty(counter)
-    counter = 100000;
+if isempty(counter_1)
+    counter_1 = 100000;
+end
+
+if isempty(counter_2)
+    counter_2 = 100000;
 end
 
 if isempty(time_memory)
@@ -61,12 +71,16 @@ gamma = 0.9;
 accao_anterior = accao;
 
 
-q_value_anterior = q_value;
+q_value_anterior_1 = q_value_1;
+q_value_anterior_2 = q_value_2;
 
-if isempty(q_value_anterior)
-    q_value_anterior = [0;0;0;0;0];
+if isempty(q_value_anterior_1)
+    q_value_anterior_1 = [0;0;0;0;0];
 end
 
+if isempty(q_value_anterior_2)
+    q_value_anterior_2 = [0;0;0;0;0];
+end
 %% Rewards
 
 % Calcular distância à coin mais próxima
@@ -164,13 +178,14 @@ if ~first_game_over
     accao = randi([1 5]);
     accao_1 = accao;
 else
-    q_value = sim(net_decisao,estado);
+    q_value_1 = sim(net_decisao_1,estado);
+    q_value_2 = sim(net_decisao_2,estado);
     
+    possivel_accao = [q_value_1,q_value_2];
+    possivel_accao = max(possivel_accao,[],2);
     % Variação do fator de exploração com o número de vidas restante
     
-    vetor_perc_random = [4 3 2 1];
-    
-    random_or_net = randi([0 vetor_perc_random(lives.data+1)]);
+    random_or_net = randi([0 9]);
     %
     
     if ~random_or_net
@@ -178,7 +193,6 @@ else
         accao = randi([1 5]);
         accao_1 = accao;
         
-        aprendizagem(max(q_value));
         % Toma acção random entre andar numa das direções ou manter-se na mesma
         % direcção
     else
@@ -190,72 +204,99 @@ else
         % Esquerda -> 3
         % Cima -> 4
         % Permanecer na mesma direcção -> 5
-        accao = find(q_value == max(q_value),1);
+        
+        accao = find(possivel_accao == max(possivel_accao),1);
         accao_1 = accao;
-        aprendizagem(max(q_value));
+        
+        
+        
     end
 end
 
+net_one_or_two = randi([0 1]);
 
-state_memory(:,counter)=estado_anterior;
-q_value_memory(:,counter)=q_value_anterior;
-
-counter = counter -1;
-if counter <1
-    counter = 100000;
+if net_one_or_two
+    
+    q_value_anterior_1 = aprendizagem(net_decisao_2,q_value_1,estado,q_value_anterior_1);
+    q_value_memory_1(:,counter_1)=q_value_anterior_1;
+    state_memory_1(:,counter_1)=estado_anterior;
+    counter_1 = counter_1 -1;
+    
+    if counter_1 <1
+        
+        counter_1 = 100000;
+        
+    end
+    
+elseif ~net_one_or_two
+    
+    q_value_anterior_2 = aprendizagem(net_decisao_1,q_value_2,estado,q_value_anterior_2);
+    q_value_memory_2(:,counter_2)=q_value_anterior_2;
+    state_memory_2(:,counter_2)=estado_anterior;
+    
+    counter_2 = counter_2 -1;
+    
+    if counter_2 <1
+        
+        counter_2 = 100000;
+        
+    end
+    
 end
 
-
 estado_anterior = estado;
+
 % Reset à reward para poder ser alterada após a decisão, caso a acção
 % anterior tenha sido comer uma coin ou morrer
+
 if reward == 0.5*max_reward || reward == -max_reward || reward == 0.6*max_reward || reward == max_reward
     reward =0;
     
 end
 pause(0.000000001)
 
-    function aprendizagem(max_q_value)
+    function q_value_anterior = aprendizagem(net_decisao,q_value,estado,q_value_anterior)
         
-        q_value_melhor = updateQValue(q_value_anterior(accao_anterior),max_q_value);
+        q_value_novo = updateQValue(net_decisao,q_value,estado,q_value_anterior(accao_anterior));
         
-        q_value_anterior(accao_anterior)=q_value_melhor;
+        q_value_anterior(accao_anterior)=q_value_novo;
         
-        
-        
-        time = toc-6;
-        if time >0.1
-            time = 0;
-        end
-        if -0.1<time && time<0.1
-            
-            sample = randi([1 100000],[1 3000]);
-            
-            net_decisao = train(net_decisao,state_memory(:,sample),q_value_memory(:,sample),'useGPU','only');
-            time_memory = 1;
-        end
         
         
     end
 
-    function q_value_novo = updateQValue(q_value_anterior,max_q_value)
+
+    function q_value_novo = updateQValue(net_decisao,q_value,estado,q_value_accao_anterior)
         
-        q_value_modifier = alfa*(reward + gamma * max_q_value - q_value_anterior);
+        indice_max_q_value = q_value == max(q_value);
         
-        if q_value_modifier >1
-            
-            q_value_modifier =1;
-            
-        elseif q_value_modifier <-1
-            
-            q_value_modifier = -1;
-            
-        end
-        q_value_novo = q_value_anterior + q_value_modifier;
+        new_max_q_value = sim(net_decisao,estado);
         
+        
+        q_value_novo = q_value_accao_anterior + alfa * ( reward + gamma * (new_max_q_value(indice_max_q_value)) -q_value_accao_anterior);
         
     end
 
+time = toc-6;
+
+if time >0.1
+    time = 0;
+end
+
+if -0.1<time && time<0.1
+    sample = randi([1 100000],[1 3000]);
+    if net_one_or_two
+        
+        net_decisao_1 = train(net_decisao_1,state_memory_1(:,sample),q_value_memory_1(:,sample),'UseParallel','yes');
+        time_memory = 1;
+        
+    elseif ~net_one_or_two
+        
+        
+        net_decisao_2 = train(net_decisao_2,state_memory_2(:,sample),q_value_memory_2(:,sample),'UseParallel','yes');
+        time_memory = 1;
+    end
+end
 
 
 end
