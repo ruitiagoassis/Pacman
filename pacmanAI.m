@@ -31,7 +31,7 @@ global q_value_memory
 persistent q_value
 persistent q_value_anterior
 persistent estado_anterior
-% persistent distancia_anterior_proxima_moeda
+persistent distancia_anterior_proxima_moeda
 % persistent distancia_minima_fantasmas_anterior
 persistent accao
 persistent accao_anterior
