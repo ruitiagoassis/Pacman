@@ -39,6 +39,7 @@ persistent alfa % Learning Rate
 persistent gamma % Discount Rate
 persistent time_memory
 persistent counter
+
 if isempty(counter)
     counter = 100000;
 end
