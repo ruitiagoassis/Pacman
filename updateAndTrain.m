@@ -15,12 +15,12 @@ instancias = find(ismember(mem,rep,'rows'));
 mem(instancias(1:end),:)=[];
 %
 %
-% %% Train network
-%
-% mem=mem';
-% % net = configure(net,mem);
-% % net = train(net,mem);
-% mem = mem';
+%% Train network
+
+mem=mem';
+net = configure(net,mem);
+net = train(net,mem);
+mem = mem';
 
 end
 

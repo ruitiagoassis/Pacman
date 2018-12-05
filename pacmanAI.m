@@ -66,7 +66,7 @@ end
 % if isempty(distancia_minima_fantasmas_anterior)
 %     distancia_minima_fantasmas_anterior = 999;
 % end
-alfa = 0.1;
+alfa = 0.5;
 gamma = 0.9;
 accao_anterior = accao;
 
@@ -211,40 +211,62 @@ else
         
         
     end
-end
-
-net_one_or_two = randi([0 1]);
-
-if net_one_or_two
     
-    q_value_anterior_1 = aprendizagem(net_decisao_2,q_value_1,estado,q_value_anterior_1);
-    q_value_memory_1(:,counter_1)=q_value_anterior_1;
-    state_memory_1(:,counter_1)=estado_anterior;
-    counter_1 = counter_1 -1;
+    net_one_or_two = randi([0 1]);
     
-    if counter_1 <1
+    if net_one_or_two
         
-        counter_1 = 100000;
+        q_value_anterior_1 = aprendizagem(net_decisao_2,q_value_1,estado,q_value_anterior_1);
+        q_value_memory_1(:,counter_1)=q_value_anterior_1;
+        state_memory_1(:,counter_1)=estado_anterior;
+        counter_1 = counter_1 -1;
+        
+        if counter_1 <1
+            
+            counter_1 = 100000;
+            
+        end
+        
+    elseif ~net_one_or_two
+        
+        q_value_anterior_2 = aprendizagem(net_decisao_1,q_value_2,estado,q_value_anterior_2);
+        q_value_memory_2(:,counter_2)=q_value_anterior_2;
+        state_memory_2(:,counter_2)=estado_anterior;
+        
+        counter_2 = counter_2 -1;
+        
+        if counter_2 <1
+            
+            counter_2 = 100000;
+            
+        end
         
     end
+    time = toc-6;
     
-elseif ~net_one_or_two
-    
-    q_value_anterior_2 = aprendizagem(net_decisao_1,q_value_2,estado,q_value_anterior_2);
-    q_value_memory_2(:,counter_2)=q_value_anterior_2;
-    state_memory_2(:,counter_2)=estado_anterior;
-    
-    counter_2 = counter_2 -1;
-    
-    if counter_2 <1
-        
-        counter_2 = 100000;
-        
+    if time >0.1
+        time = 0;
     end
     
+    if -0.1<time && time<0.1
+        sample = randi([1 100000],[1 3000]);
+        if net_one_or_two
+            
+            net_decisao_1 = train(net_decisao_1,state_memory_1(:,sample),q_value_memory_1(:,sample),'UseParallel','yes');
+            time_memory = 1;
+            
+        elseif ~net_one_or_two
+            
+            
+            net_decisao_2 = train(net_decisao_2,state_memory_2(:,sample),q_value_memory_2(:,sample),'UseParallel','yes');
+            time_memory = 1;
+        end
+    end
+    
+    estado_anterior = estado;
 end
 
-estado_anterior = estado;
+
 
 % Reset à reward para poder ser alterada após a decisão, caso a acção
 % anterior tenha sido comer uma coin ou morrer
@@ -277,26 +299,7 @@ pause(0.000000001)
         
     end
 
-time = toc-6;
 
-if time >0.1
-    time = 0;
-end
-
-if -0.1<time && time<0.1
-    sample = randi([1 100000],[1 3000]);
-    if net_one_or_two
-        
-        net_decisao_1 = train(net_decisao_1,state_memory_1(:,sample),q_value_memory_1(:,sample),'UseParallel','yes');
-        time_memory = 1;
-        
-    elseif ~net_one_or_two
-        
-        
-        net_decisao_2 = train(net_decisao_2,state_memory_2(:,sample),q_value_memory_2(:,sample),'UseParallel','yes');
-        time_memory = 1;
-    end
-end
 
 
 end
