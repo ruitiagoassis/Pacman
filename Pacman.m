@@ -57,10 +57,10 @@ global q_value_memory_1
 global state_memory_2
 global q_value_memory_2
 
-q_value_memory_1 = zeros(5,100000);
-state_memory_1 = zeros(400,100000);
-q_value_memory_2 = zeros(5,100000);
-state_memory_2 = zeros(400,100000);
+q_value_memory_1 = zeros(5,10000);
+state_memory_1 = zeros(400,10000);
+q_value_memory_2 = zeros(5,10000);
+state_memory_2 = zeros(400,10000);
 
 % load('state and q_value memory.mat');
 historico_reward = [];

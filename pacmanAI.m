@@ -47,11 +47,11 @@ persistent counter_1
 persistent counter_2
 
 if isempty(counter_1)
-    counter_1 = 100000;
+    counter_1 = 10000;
 end
 
 if isempty(counter_2)
-    counter_2 = 100000;
+    counter_2 = 10000;
 end
 
 if isempty(time_memory)
@@ -66,7 +66,7 @@ end
 % if isempty(distancia_minima_fantasmas_anterior)
 %     distancia_minima_fantasmas_anterior = 999;
 % end
-alfa = 0.5;
+alfa = 0.3;
 gamma = 0.9;
 accao_anterior = accao;
 
@@ -223,7 +223,7 @@ else
         
         if counter_1 <1
             
-            counter_1 = 100000;
+            counter_1 = 10000;
             
         end
         
@@ -237,7 +237,7 @@ else
         
         if counter_2 <1
             
-            counter_2 = 100000;
+            counter_2 = 10000;
             
         end
         
@@ -249,7 +249,7 @@ else
     end
     
     if -0.1<time && time<0.1
-        sample = randi([1 100000],[1 3000]);
+        sample = randi([1 10000],[1 300]);
         if net_one_or_two
             
             net_decisao_1 = train(net_decisao_1,state_memory_1(:,sample),q_value_memory_1(:,sample),'UseParallel','yes');
