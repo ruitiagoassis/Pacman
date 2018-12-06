@@ -29,6 +29,7 @@ global state_memory_1
 global q_value_memory_1
 global state_memory_2
 global q_value_memory_2
+global versao
 
 %% Persistent Variables
 persistent q_value_1
@@ -45,6 +46,19 @@ persistent gamma % Discount Rate
 persistent time_memory
 persistent counter_1
 persistent counter_2
+
+if isempty(accao_anterior)
+    accao_anterior = 5;
+    accao_1 = 5;
+    
+end
+
+if mod(versao,10)
+   accao_1 = accao_anterior;
+else
+    accao_anterior = accao;
+end
+
 
 if isempty(counter_1)
     counter_1 = 10000;
@@ -68,7 +82,6 @@ end
 % end
 alfa = 0.3;
 gamma = 0.9;
-accao_anterior = accao;
 
 
 q_value_anterior_1 = q_value_1;
@@ -108,7 +121,7 @@ end
 % à próxima moeda
 %
 if reward ~= 0.5*max_reward && reward ~= -max_reward && reward ~= 0.6*max_reward && reward ~= max_reward
-    reward = -0.1*max_reward;
+    reward = -0.001*max_reward;
 end
 %
 % distancia_anterior_proxima_moeda = distancia_proxima_moeda;
@@ -191,8 +204,9 @@ else
     if ~random_or_net
         
         accao = randi([1 5]);
-        accao_1 = accao;
-        
+        if ~mod(versao,10)
+            accao_1 = accao;
+        end
         % Toma acção random entre andar numa das direções ou manter-se na mesma
         % direcção
     else
@@ -206,11 +220,13 @@ else
         % Permanecer na mesma direcção -> 5
         
         accao = find(possivel_accao == max(possivel_accao),1);
-        accao_1 = accao;
-        
+        if ~mod(versao,10)
+            accao_1 = accao;
+        end
         
         
     end
+    
     
     net_one_or_two = randi([0 1]);
     
