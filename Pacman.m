@@ -74,11 +74,11 @@ reward_history = 0;
 % load('redes e memoria mapa.mat')
 % first_game_over = 1;
 % else
-% first_game_over = 0;
-% mem=[0 0];
-% net_mapa = selforgmap([20 20]);
-% net_mapa.inputs{1}.size=2;
-% net_mapa.trainParam.showWindow = false;
+first_game_over = 0;
+mem=[0 0];
+net_mapa = selforgmap([20 20]);
+net_mapa.inputs{1}.size=2;
+net_mapa.trainParam.showWindow = false;
 
 %% Criação da Rede Decisao 1
 net_decisao_1 = patternnet([20 10]);
@@ -105,13 +105,13 @@ net_decisao_2 = init(net_decisao_2);
 max_reward = 100;
 reward = 0;
 
-load('redes e memoria mapa.mat')
-first_game_over = 1;
+% load('redes e memoria mapa.mat')
+first_game_over = 0;
 
 
 %% General configurations
 % load standard game data
-gameData = load('gameData.mat');
+gameData = load('smallGameData.mat');
 % change the game configurations to suit yourself
 overallEnemySpeed = 1/8;    % standard ghost speed, (default: 1/8, maximum possible: 1/2);
 grumpyTime = 700;           % time-increments that ghosts stay grumpy for (default: 700)
@@ -192,38 +192,38 @@ enemies(1).textTimer = 0;               % remembers when enemy was eaten
 enemies(1).plot = imagesc(myAxes1,'XData',[enemies(1).pos(1)-0.6 enemies(1).pos(1)+0.6],'YData',[enemies(1).pos(2)+0.6 enemies(1).pos(2)-0.6],'CData',ghostSprites{1,2,1});
 enemies(1).text = text(enemies(1).pos(1),enemies(1).pos(2),'100','Color','w','FontSize',10,'Visible','off','Parent',myAxes1,'FontName',pacFont,'FontUnits','normalized','FontWeight','bold');
 
-enemies(2).pos = [14.5, 16.5];
-enemies(2).dir = 0;
-enemies(2).oldDir = 1;
-enemies(2).speed = overallEnemySpeed;
-enemies(2).status = 0;
-enemies(2).statusTimer = -1;
-enemies(2).curPosMov = 0;
-enemies(2).textTimer = 0;
-enemies(2).plot = imagesc(myAxes1,'XData',[enemies(2).pos(1)-0.6 enemies(2).pos(1)+0.6],'YData',[enemies(2).pos(2)+0.6 enemies(2).pos(2)-0.6],'CData',ghostSprites{2,2,1});
-enemies(2).text = text(enemies(2).pos(1),enemies(2).pos(2),'100','Color','w','FontSize',10,'Visible','off','Parent',myAxes1,'FontName',pacFont,'FontUnits','normalized','FontWeight','bold');
+% enemies(2).pos = [14.5, 16.5];
+% enemies(2).dir = 0;
+% enemies(2).oldDir = 1;
+% enemies(2).speed = overallEnemySpeed;
+% enemies(2).status = 0;
+% enemies(2).statusTimer = -1;
+% enemies(2).curPosMov = 0;
+% enemies(2).textTimer = 0;
+% enemies(2).plot = imagesc(myAxes1,'XData',[enemies(2).pos(1)-0.6 enemies(2).pos(1)+0.6],'YData',[enemies(2).pos(2)+0.6 enemies(2).pos(2)-0.6],'CData',ghostSprites{2,2,1});
+% enemies(2).text = text(enemies(2).pos(1),enemies(2).pos(2),'100','Color','w','FontSize',10,'Visible','off','Parent',myAxes1,'FontName',pacFont,'FontUnits','normalized','FontWeight','bold');
 
-enemies(3).pos = [12.5, 17.5];
-enemies(3).dir = 0;
-enemies(3).oldDir = 1;
-enemies(3).speed = overallEnemySpeed;
-enemies(3).status = 0;
-enemies(3).statusTimer = -1;
-enemies(3).curPosMov = 0;
-enemies(3).textTimer = 0;
-enemies(3).plot = imagesc(myAxes1,'XData',[enemies(3).pos(1)-0.6 enemies(3).pos(1)+0.6],'YData',[enemies(3).pos(2)+0.6 enemies(3).pos(2)-0.6],'CData',ghostSprites{3,2,1});
-enemies(3).text = text(enemies(3).pos(1),enemies(3).pos(2),'100','Color','w','FontSize',10,'Visible','off','Parent',myAxes1,'FontName',pacFont,'FontUnits','normalized','FontWeight','bold');
+% enemies(3).pos = [12.5, 17.5];
+% enemies(3).dir = 0;
+% enemies(3).oldDir = 1;
+% enemies(3).speed = overallEnemySpeed;
+% enemies(3).status = 0;
+% enemies(3).statusTimer = -1;
+% enemies(3).curPosMov = 0;
+% enemies(3).textTimer = 0;
+% enemies(3).plot = imagesc(myAxes1,'XData',[enemies(3).pos(1)-0.6 enemies(3).pos(1)+0.6],'YData',[enemies(3).pos(2)+0.6 enemies(3).pos(2)-0.6],'CData',ghostSprites{3,2,1});
+% enemies(3).text = text(enemies(3).pos(1),enemies(3).pos(2),'100','Color','w','FontSize',10,'Visible','off','Parent',myAxes1,'FontName',pacFont,'FontUnits','normalized','FontWeight','bold');
 
-enemies(4).pos = [16.5, 17.5];
-enemies(4).dir = 0;
-enemies(4).oldDir = 1;
-enemies(4).speed = overallEnemySpeed;
-enemies(4).status = 0;
-enemies(4).statusTimer = -1;
-enemies(4).curPosMov = 0;
-enemies(4).textTimer = 0;
-enemies(4).plot = imagesc(myAxes1,'XData',[enemies(4).pos(1)-0.6 enemies(4).pos(1)+0.6],'YData',[enemies(4).pos(2)+0.6 enemies(4).pos(2)-0.6],'CData',ghostSprites{4,2,1});
-enemies(4).text = text(enemies(4).pos(1),enemies(4).pos(2),'100','Color','w','FontSize',10,'Visible','off','Parent',myAxes1,'FontName',pacFont,'FontUnits','normalized','FontWeight','bold');
+% enemies(4).pos = [16.5, 17.5];
+% enemies(4).dir = 0;
+% enemies(4).oldDir = 1;
+% enemies(4).speed = overallEnemySpeed;
+% enemies(4).status = 0;
+% enemies(4).statusTimer = -1;
+% enemies(4).curPosMov = 0;
+% enemies(4).textTimer = 0;
+% enemies(4).plot = imagesc(myAxes1,'XData',[enemies(4).pos(1)-0.6 enemies(4).pos(1)+0.6],'YData',[enemies(4).pos(2)+0.6 enemies(4).pos(2)-0.6],'CData',ghostSprites{4,2,1});
+% enemies(4).text = text(enemies(4).pos(1),enemies(4).pos(2),'100','Color','w','FontSize',10,'Visible','off','Parent',myAxes1,'FontName',pacFont,'FontUnits','normalized','FontWeight','bold');
 %% Scatter or Chase modes (0: chase mode, 1: scatter mode)
 % ghostMode.timer = 0;
 ghostMode.timerValues = [250 1000; 1500 2000; 2650 3650; 3800 -1]; % switch to and fro from chase to scatter mode after some time. In the end only chase
@@ -232,7 +232,7 @@ ghostMode.status = 0; % 0: chase, 1: scatter
 ghostMode.tiles = [1 -10; 28 -10; 28 33; 1 33]; % corner tiles for scatter mode. are slightly above and beneath the actual corners so host don't get trapped
 ghostMode.targetPlot = gobjects(1,4); % plot objects for target visualization
 ghostMode.form = [0.5 0.5 -0.5 -0.5; 0.5 -0.5 -0.5 0.5]; % target form (square)
-for ii = 1:4
+for ii = 1:1
     ghostMode.targetPlot(ii) = patch('XData',ghostMode.form(1,:),'YData',ghostMode.form(2,:),'FaceColor',allSprites.colormap(ghostSprites{ii,2,1}(1,6),:),'Parent',myAxes1,'Visible','off');
 end
 %% Fruits
@@ -375,16 +375,16 @@ pacmanLabyCreator_Fig = figure('Visible','off');
         set(createLabyButton,'Visible','off')
         set(showHighScoresButton,'Visible','off')
         
-        for nn = 1:4
+        for nn = 1:1
             set(ghostMode.targetPlot(nn),'FaceColor',allSprites.colormap(ghostSprites{nn,2,1}(1,6),:));
         end
         
         % ugly workaround for focussing on figure after buttonpress (needed
         % for WindowKeyPressFcn to work properly)
-        set(0,'PointerLocation',screenCenter)
-        robot = java.awt.Robot;
-        robot.mousePress(java.awt.event.InputEvent.BUTTON1_MASK);
-        robot.mouseRelease(java.awt.event.InputEvent.BUTTON1_MASK);
+%         set(0,'PointerLocation',screenCenter)
+%         robot = java.awt.Robot;
+%         robot.mousePress(java.awt.event.InputEvent.BUTTON1_MASK);
+%         robot.mouseRelease(java.awt.event.InputEvent.BUTTON1_MASK);
         
         newGame
         set(info.text,'Visible','off')
@@ -407,7 +407,7 @@ pacmanLabyCreator_Fig = figure('Visible','off');
         grumpySprites = allSprites.grumpy;
         colormap(allSprites.colormap)
         
-        for nn = 1:4
+        for nn = 1:1
             plotGhost(enemies(nn),ghostSprites{nn,enemies(nn).oldDir,ghostFrame+1},zeros(14,14))
         end
         
@@ -464,10 +464,10 @@ pacmanLabyCreator_Fig = figure('Visible','off');
     function newGame
         stop(myTimer)
         enemies(1).pos = [14.5, 20];
-        enemies(2).pos = [14.5, 16.5];
-        enemies(3).pos = [12.5, 17.5];
-        enemies(4).pos = [16.5, 17.5];
-        for nn = 1:4
+        %         enemies(2).pos = [14.5, 16.5];
+        %         enemies(3).pos = [12.5, 17.5];
+        %         enemies(4).pos = [16.5, 17.5];
+        for nn = 1:1
             enemies(nn).status = 0;
             enemies(nn).dir = 0;
             enemies(nn).oldDir = 2;
@@ -489,7 +489,7 @@ pacmanLabyCreator_Fig = figure('Visible','off');
         set(pacman.plot,'XData',pacman.frames{pacman.oldDir,1}(1,:)+pacman.pos(1),'YData',pacman.frames{pacman.oldDir,1}(2,:)+pacman.pos(2),'Visible','on')
         set(info.text,'String','READY!','Color','g','Visible','on')
         
-        for nn = 1:4
+        for nn = 1:1
             plotGhost(enemies(nn),ghostSprites{nn,enemies(nn).oldDir,1},zeros(14,14))
             set(enemies(nn).plot,'Visible','on')
         end
@@ -539,7 +539,7 @@ pacmanLabyCreator_Fig = figure('Visible','off');
         if any(ismember(pills.data,findSquare(pacman,pacman.oldDir),'rows'))
             pills.data(ismember(pills.data,findSquare(pacman,pacman.oldDir),'rows'),:) = [];
             ghostPoints = 100;
-            for nn = 1:4
+            for nn = 1:1
                 if enemies(nn).status > 0 && enemies(nn).status < 4
                     enemies(nn).status = 2;
                 elseif enemies(nn).status == 5
@@ -669,7 +669,7 @@ pacmanLabyCreator_Fig = figure('Visible','off');
             end
             
             % start animation
-            for nn = 1:4 % turn ghosts off
+            for nn = 1:1 % turn ghosts off
                 set(enemies(nn).plot,'Visible','off')
             end
             
@@ -736,7 +736,7 @@ pacmanLabyCreator_Fig = figure('Visible','off');
         if curFrame == 1 || curFrame == 7 % switch between frames for movement illusion
             ghostFrame = ~ghostFrame;
         end
-        for nn = 1:4 % consider one ghost at a time
+        for nn = 1:1 % consider one ghost at a time
             % ghost hits pacman -> pacman dies
             if enemies(nn).status == 1 && abs(pacman.pos(1)-enemies(nn).pos(1)) < 1.1 && abs(pacman.pos(2)-enemies(nn).pos(2)) < 1.1 && ~invincible
                 pacman.status = -3; % pacman dies

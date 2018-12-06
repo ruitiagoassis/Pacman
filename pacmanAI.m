@@ -53,7 +53,7 @@ if isempty(accao_anterior)
     
 end
 
-if mod(versao,10)
+if mod(versao,6)
    accao_1 = accao_anterior;
 else
     accao_anterior = accao;
@@ -80,7 +80,7 @@ end
 % if isempty(distancia_minima_fantasmas_anterior)
 %     distancia_minima_fantasmas_anterior = 999;
 % end
-alfa = 0.3;
+alfa = 0.1;
 gamma = 0.9;
 
 
@@ -121,7 +121,7 @@ end
 % à próxima moeda
 %
 if reward ~= 0.5*max_reward && reward ~= -max_reward && reward ~= 0.6*max_reward && reward ~= max_reward
-    reward = -0.001*max_reward;
+    reward = -0.01*max_reward;
 end
 %
 % distancia_anterior_proxima_moeda = distancia_proxima_moeda;
@@ -142,7 +142,7 @@ end
 % Mapeia a posição do pacman
 pos_pacman = sim(net_mapa,pacman.pos');
 % Mapeia a posição dos fantasmas
-pos_fantasmas = sim(net_mapa,[enemies(1).pos',enemies(2).pos',enemies(3).pos',enemies(4).pos']);
+pos_fantasmas = sim(net_mapa,[enemies(1).pos']);
 % Mapeia a posição das moedas
 pos_moedas = sim(net_mapa,coins.data');
 % Posição das pills
@@ -159,8 +159,8 @@ pos_pills = sim(net_mapa,pills.data');
 % Fantasmas na caixa -> 0
 % Fantasmas em modo olhos -> 0
 % Identifica se fantasmas podem ser comidos ou não
-estado_fantasmas = zeros(1,4);
-for i=1:4
+estado_fantasmas = zeros(1,1);
+for i=1:1
     if enemies(i).status == 0
         estado_fantasmas(i)=0;
     elseif enemies(i).status == 1
@@ -198,13 +198,13 @@ else
     possivel_accao = max(possivel_accao,[],2);
     % Variação do fator de exploração com o número de vidas restante
     
-    random_or_net = randi([0 9]);
+    random_or_net = randi([0 99]);
     %
     
     if ~random_or_net
         
         accao = randi([1 5]);
-        if ~mod(versao,10)
+        if ~mod(versao,6)
             accao_1 = accao;
         end
         % Toma acção random entre andar numa das direções ou manter-se na mesma
@@ -220,7 +220,7 @@ else
         % Permanecer na mesma direcção -> 5
         
         accao = find(possivel_accao == max(possivel_accao),1);
-        if ~mod(versao,10)
+        if ~mod(versao,6)
             accao_1 = accao;
         end
         
