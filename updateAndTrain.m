@@ -17,11 +17,11 @@ mem(instancias(1:end),:)=[];
 %
 %% Train network
 
-mem=mem';
-net.trainParam.showWindow = false;
-net = configure(net,mem);
-net = train(net,mem);
-mem = mem';
+% mem=mem';
+% net.trainParam.showWindow = false;
+% net = configure(net,mem);
+% net = train(net,mem);
+% mem = mem';
 
 end
 

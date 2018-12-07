@@ -38,6 +38,9 @@ persistent q_value_2
 persistent q_value_anterior_1
 persistent q_value_anterior_2
 
+persistent posicao_pacman_anterior
+% persistent distancia_anterior_proxima_moeda
+
 persistent estado_anterior
 persistent accao
 persistent accao_anterior
@@ -53,8 +56,15 @@ if isempty(accao_anterior)
     
 end
 
-if mod(versao,6)
-   accao_1 = accao_anterior;
+if isempty(posicao_pacman_anterior)
+    
+    posicao_pacman_anterior =  [0 0];
+end
+% if isempty(distancia_anterior_proxima_moeda)
+%     distancia_anterior_proxima_moeda = 99;
+% end
+if mod(versao,18)
+    accao_1 = accao_anterior;
 else
     accao_anterior = accao;
 end
@@ -102,15 +112,15 @@ end
 % for i=1:size(coins.data,1)
 %     distancia_moeda(i) = abs(pacman.pos(1)-coins.data(i,1))+abs(pacman.pos(2)-coins.data(i,2));
 % end
-%
+% 
 % distancia_proxima_moeda = min(distancia_moeda);
 
 % Verificar se o Pacman se está a aproximar de fantasmas.
-% distancia_fantasmas = zeros(1,4);
-% for i=1:4
+% distancia_fantasmas = zeros(1,1);
+% for i=1:1
 %     distancia_fantasmas(i) = abs(pacman.pos(1)-enemies(i).pos(1))+abs(pacman.pos(2)-enemies(i).pos(2));
 % end
-%
+% %
 % distancia_minima_fantasmas = min(distancia_fantasmas);
 % fantasma_mais_proximo = find(distancia_minima_fantasmas == min(distancia_fantasmas));
 % Verifica se a distância à moeda mais próxima aumentou ou diminuiu
@@ -121,13 +131,18 @@ end
 % à próxima moeda
 %
 if reward ~= 0.5*max_reward && reward ~= -max_reward && reward ~= 0.6*max_reward && reward ~= max_reward
-    reward = -0.01*max_reward;
+    if posicao_pacman_anterior == pacman.pos
+        reward = -0.7*max_reward;
+    else
+        reward = -0.01*max_reward;
+    end
 end
+posicao_pacman_anterior = pacman.pos;
 %
 % distancia_anterior_proxima_moeda = distancia_proxima_moeda;
-
-
-
+%
+%
+%
 
 %% Implementação
 
@@ -173,14 +188,14 @@ for i=1:1
 end
 
 % if distancia_minima_fantasmas < 6
-%     if distancia_minima_fantasmas < distancia_minima_fantasmas_anterior &&  estado_fantasmas(fantasma_mais_proximo)==6
-%         reward = -0.6*max_reward;
+%     if distancia_minima_fantasmas < distancia_minima_fantasmas_anterior &&  estado_fantasmas(fantasma_mais_proximo)==5
+%         reward = -0.6*max_reward
 %     end
 % end
 % distancia_minima_fantasmas_anterior = distancia_minima_fantasmas;
 
 pos_fantasmas = pos_fantasmas.*estado_fantasmas;
-estado = [4*pos_pacman,pos_fantasmas,pos_moedas,2*pos_pills];
+estado = [4*pos_pacman,pos_fantasmas,pos_moedas];
 estado = max(estado,[],2);
 
 if isempty(estado_anterior)
@@ -201,10 +216,10 @@ else
     random_or_net = randi([0 99]);
     %
     
-    if ~random_or_net
+    if random_or_net <5
         
         accao = randi([1 5]);
-        if ~mod(versao,6)
+        if ~mod(versao,18)
             accao_1 = accao;
         end
         % Toma acção random entre andar numa das direções ou manter-se na mesma
@@ -220,7 +235,7 @@ else
         % Permanecer na mesma direcção -> 5
         
         accao = find(possivel_accao == max(possivel_accao),1);
-        if ~mod(versao,6)
+        if ~mod(versao,18)
             accao_1 = accao;
         end
         
