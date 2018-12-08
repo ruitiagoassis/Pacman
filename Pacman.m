@@ -105,17 +105,17 @@ net_decisao_2 = init(net_decisao_2);
 max_reward = 10;
 reward = 0;
 
-load('redes e memoria mapa.mat')
-load('state and q_value memory 1.mat')
-load('state and q_value memory 2.mat')
-first_game_over = 1;
+% load('redes e memoria mapa.mat')
+% load('state and q_value memory 1.mat')
+% load('state and q_value memory 2.mat')
+% first_game_over = 1;
 
 
 %% General configurations
 % load standard game data
-gameData = load('smallGameData.mat');
+gameData = load('myOwnLabyData.mat');
 % change the game configurations to suit yourself
-overallEnemySpeed = 2/8;    % standard ghost speed, (default: 1/8, maximum possible: 1/2);
+overallEnemySpeed = 1/8;    % standard ghost speed, (default: 1/8, maximum possible: 1/2);
 grumpyTime = 700;           % time-increments that ghosts stay grumpy for (default: 700)
 grumpyTimeSwitch = 200;     % time-increments that grumpy ghosts show that they are going to turn normal again (default: 200)
 newEnemyTime = 500;         % time-increments that pass before the next ghost is let out of his cage (default: 500)
@@ -125,7 +125,7 @@ game.faster = -0.001;       % make game faster every level by this amount (defau
 game.maxSpeed = 0.005;      % maximimum game speed (default: 0.01)
 AI.init = 0.0;              % initial AI-> 0: (almost) no randomness, 1: full randomness
 AI.improve = -0.1;          % AI-improvement per level (default: -0.1)
-pacman.speed = 2/6;         % pacman speed (default: 1/6 => pacman eats exactly two coins with every mouth open/close cycle, maximum possible: 1/2)
+pacman.speed = 1/6;         % pacman speed (default: 1/6 => pacman eats exactly two coins with every mouth open/close cycle, maximum possible: 1/2)
 enemyPersonalities = 1;     % flag whether to use individual personalities for every ghost or not
 showGhostTarget = 0;        % flag whether to show where each ghost is heading towards or not
 autoPlay = 1;               % flag whether auto play is on or not
@@ -483,9 +483,9 @@ pacmanLabyCreator_Fig = figure('Visible','off');
         
         ghostMode.timerStatus = 1;
         ghostMode.status = 0;
-%         random = randi([1 size(coins.data,1)]);
-%         pacman.pos = coins.data(random,:);
-        pacman.pos = [14.5 8];
+        random = randi([1 size(coins.data,1)]);
+        pacman.pos = coins.data(random,:);
+%         pacman.pos = [14.5 8];
         pacman.dir = 0;
         pacman.oldDir = 1;
         pacman.status = -2;

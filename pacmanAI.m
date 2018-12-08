@@ -63,7 +63,7 @@ end
 % if isempty(distancia_anterior_proxima_moeda)
 %     distancia_anterior_proxima_moeda = 99;
 % end
-if mod(versao,18)
+if mod(versao,12)
     accao_1 = accao_anterior;
 else
     accao_anterior = accao;
@@ -219,7 +219,7 @@ else
     if random_or_net <5
         
         accao = randi([1 5]);
-        if ~mod(versao,18)
+        if ~mod(versao,12)
             accao_1 = accao;
         end
         % Toma acção random entre andar numa das direções ou manter-se na mesma
@@ -235,7 +235,7 @@ else
         % Permanecer na mesma direcção -> 5
         
         accao = find(possivel_accao == max(possivel_accao),1);
-        if ~mod(versao,18)
+        if ~mod(versao,12)
             accao_1 = accao;
         end
         
