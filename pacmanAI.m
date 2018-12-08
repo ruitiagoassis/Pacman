@@ -53,7 +53,6 @@ persistent counter_2
 if isempty(accao_anterior)
     accao_anterior = 5;
     accao_1 = 5;
-    
 end
 
 if isempty(posicao_pacman_anterior)
