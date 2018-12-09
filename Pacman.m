@@ -58,9 +58,9 @@ global state_memory_2
 global q_value_memory_2
 
 q_value_memory_1 = zeros(5,10000);
-state_memory_1 = zeros(400,10000);
+state_memory_1 = zeros(1089,10000);
 q_value_memory_2 = zeros(5,10000);
-state_memory_2 = zeros(400,10000);
+state_memory_2 = zeros(1089,10000);
 
 % load('state and q_value memory.mat');
 historico_reward = [];
@@ -70,45 +70,45 @@ pontuacao = [];
 reward_history = 0;
 
 % if ~exist('net_mapa','var') && ~exist('net_decisao','var') & ~exist('mem','var')
-% load('net_mapa','net_mapa');
+load('net_mapa','net_mapa');
 % load('redes e memoria mapa.mat')
 % first_game_over = 1;
 % else
-first_game_over = 0;
-mem=[0 0];
-net_mapa = selforgmap([20 20]);
-net_mapa.inputs{1}.size=2;
-net_mapa.trainParam.showWindow = false;
+% first_game_over = 0;
+% mem=[0 0];
+% net_mapa = selforgmap([20 20]);
+% net_mapa.inputs{1}.size=;
+% net_mapa.trainParam.showWindow = false;
 
 %% Criação da Rede Decisao 1
-net_decisao_1 = patternnet([20 10]);
+net_decisao_1 = feedforwardnet(10);
 net_decisao_1.performFcn = 'mse';
 net_decisao_1.trainFcn = 'traingdx';
 net_decisao_1.trainParam.showWindow = false;
 net_decisao_1.trainParam.max_fail=10;
-net_decisao_1.layers{3}.dimensions=5;
-net_decisao_1.layers{3}.transferFcn = 'tansig';
-net_decisao_1.inputs{1}.size=400;
+net_decisao_1.layers{2}.dimensions=5;
+net_decisao_1.layers{2}.transferFcn = 'tansig';
+net_decisao_1.inputs{1}.size=1089;
 net_decisao_1 = init(net_decisao_1);
 % % end
 %% Criação da Rede Decisão 2
-net_decisao_2 = patternnet([20 10]);
+net_decisao_2 = feedforwardnet(10);
 net_decisao_2.performFcn = 'mse';
 net_decisao_2.trainFcn = 'traingdx';
 net_decisao_2.trainParam.showWindow = false;
 net_decisao_2.trainParam.max_fail=10;
-net_decisao_2.layers{3}.dimensions=5;
-net_decisao_2.layers{3}.transferFcn = 'tansig';
-net_decisao_2.inputs{1}.size=400;
+net_decisao_2.layers{2}.dimensions=5;
+net_decisao_2.layers{2}.transferFcn = 'tansig';
+net_decisao_2.inputs{1}.size=1089;
 net_decisao_2 = init(net_decisao_2);
 %%
 max_reward = 10;
 reward = 0;
 
-% load('redes e memoria mapa.mat')
-% load('state and q_value memory 1.mat')
-% load('state and q_value memory 2.mat')
-% first_game_over = 1;
+load('redes e memoria mapa.mat')
+load('state and q_value memory 1.mat')
+load('state and q_value memory 2.mat')
+first_game_over = 1;
 
 
 %% General configurations
@@ -151,7 +151,7 @@ pacman_Fig = figure('units','pixels','Position',[limit_left limit_down figure_si
 myAxes1 = axes('Units','normalized','Position',[0 0.04 1 0.90],...
     'XLim',[-3.11 32.01],'YLim',[-3.11 32.01]);
 hold(myAxes1,'on')
-axis(myAxes1,'off','equal')
+axis(myAxes1,'off','equal') 
 allDirections = gameData.gameData.allDirections;    % all possible Directions in each square
 allSprites = gameData.gameData.allSprites;          % all sprites-data
 allWalls = gameData.gameData.allWalls;              % all wall-data
@@ -258,7 +258,7 @@ grumpyTimeSwitchSave = 0;   % this variable remembers the timer-status, so the g
 ghostPoints = 100;          % determines how many points a ghost adds to the score (doubles with each kill)
 %% Initialize pacman
 pacman.size = 0.8;          % pacman size
-pacman.pos = [14.5 8];      % position of pacman
+pacman.pos = [14.5 11];      % position of pacman
 pacman.dir = 0;             % direction of pacman
 pacman.oldDir = 1;          % old direction of pacman
 pacman.status = -2;         % -2 is normal, -3 is hit by ghost (don't ask me why I chose 'em numbers like that)
@@ -429,7 +429,7 @@ pacmanLabyCreator_Fig = figure('Visible','off');
         ghostTimerFun
         reward_history = reward_history + reward;
         versao = versao +1;
-        mem = [mem ; pacman.pos];
+%         mem = [mem ; pacman.pos];
     end
     function musicOnOff
         soundsFlag = ~soundsFlag;
@@ -483,10 +483,10 @@ pacmanLabyCreator_Fig = figure('Visible','off');
         
         ghostMode.timerStatus = 1;
         ghostMode.status = 0;
-        random = randi([1 size(coins.data,1)]);
-        pacman.pos = coins.data(random,:);
-%         pacman.pos = [14.5 8];
-        pacman.dir = 0;
+%         random = randi([1 size(coins.data,1)]);
+%         pacman.pos = coins.data(random,:);
+        pacman.pos = [14.5 11];
+        pacman.dir = 1;
         pacman.oldDir = 1;
         pacman.status = -2;
         set(pacman.plot,'XData',pacman.frames{pacman.oldDir,1}(1,:)+pacman.pos(1),'YData',pacman.frames{pacman.oldDir,1}(2,:)+pacman.pos(2),'Visible','on')
@@ -718,12 +718,12 @@ pacmanLabyCreator_Fig = figure('Visible','off');
                 set(loadGhostsButton,'Visible','on')
                 set(createLabyButton,'Visible','on')
                 set(showHighScoresButton,'Visible','on')
-                [mem,net_mapa] = updateAndTrain(mem,net_mapa);
+%                 [mem,net_mapa] = updateAndTrain(mem,net_mapa);
                 first_game_over = 1;
                 historico_reward = [historico_reward reward_history];
                 iteracao = [iteracao versao];
                 pontuacao = [pontuacao score.data];
-                save('redes e memoria mapa','net_mapa','net_decisao_1','net_decisao_2')
+                save('redes e memoria mapa','net_decisao_1','net_decisao_2')
                 save('Reward history','historico_reward')
                 save('Numero de Iteracoes','iteracao')
                 save('historico de pontuacao','pontuacao')
