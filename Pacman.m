@@ -40,10 +40,8 @@ function Pacman
 % close all
 clc
 
-global net_mapa;
-global net_decisao_1;
-global net_decisao_2;
-global mem;
+
+
 global reward
 global max_reward
 global first_game_over
@@ -52,63 +50,29 @@ global versao
 global reward_history
 global historico_reward
 global iteracao
-global state_memory_1
-global q_value_memory_1
-global state_memory_2
-global q_value_memory_2
+global q_value_memoria
+global net_decisao
+global stacked_frame;
 
-q_value_memory_1 = zeros(5,10000);
-state_memory_1 = zeros(400,10000);
-q_value_memory_2 = zeros(5,10000);
-state_memory_2 = zeros(400,10000);
+q_value_memoria(:,:,1)=0;
+q_value_memoria(:,:,2)=0;
+q_value_memoria(:,:,3)=0;
+q_value_memoria(:,:,4)=0;
 
-% load('state and q_value memory.mat');
+net_decisao = [];
 historico_reward = [];
 iteracao = [];
 versao = 1;
 pontuacao = [];
 reward_history = 0;
 
-% if ~exist('net_mapa','var') && ~exist('net_decisao','var') & ~exist('mem','var')
-% load('net_mapa','net_mapa');
-% load('redes e memoria mapa.mat')
-% first_game_over = 1;
-% else
-first_game_over = 0;
-mem=[0 0];
-net_mapa = selforgmap([20 20]);
-net_mapa.inputs{1}.size=2;
-net_mapa.trainParam.showWindow = false;
 
-%% Criação da Rede Decisao 1
-net_decisao_1 = patternnet([20 10]);
-net_decisao_1.performFcn = 'mse';
-net_decisao_1.trainFcn = 'traingdx';
-net_decisao_1.trainParam.showWindow = false;
-net_decisao_1.trainParam.max_fail=10;
-net_decisao_1.layers{3}.dimensions=5;
-net_decisao_1.layers{3}.transferFcn = 'tansig';
-net_decisao_1.inputs{1}.size=400;
-net_decisao_1 = init(net_decisao_1);
-% % end
-%% Criação da Rede Decisão 2
-net_decisao_2 = patternnet([20 10]);
-net_decisao_2.performFcn = 'mse';
-net_decisao_2.trainFcn = 'traingdx';
-net_decisao_2.trainParam.showWindow = false;
-net_decisao_2.trainParam.max_fail=10;
-net_decisao_2.layers{3}.dimensions=5;
-net_decisao_2.layers{3}.transferFcn = 'tansig';
-net_decisao_2.inputs{1}.size=400;
-net_decisao_2 = init(net_decisao_2);
+
 %%
+
 max_reward = 10;
 reward = 0;
-
-% load('redes e memoria mapa.mat')
-% load('state and q_value memory 1.mat')
-% load('state and q_value memory 2.mat')
-% first_game_over = 1;
+first_game_over = 0;
 
 
 %% General configurations
@@ -122,7 +86,7 @@ newEnemyTime = 500;         % time-increments that pass before the next ghost is
 fruitAppear = [300,1500];   % time frame in whih fruits are to appear in the game (default: between 300 and 1500 time-increments after level start)
 game.speed = 0.001;         % game speed (time-increment between two frames) maximum possible without lag on my machine: 0.008
 game.faster = -0.001;       % make game faster every level by this amount (default: -0.001)
-game.maxSpeed = 0.005;      % maximimum game speed (default: 0.01)
+game.maxSpeed = 0.001;      % maximimum game speed (default: 0.01)
 AI.init = 0.0;              % initial AI-> 0: (almost) no randomness, 1: full randomness
 AI.improve = -0.1;          % AI-improvement per level (default: -0.1)
 pacman.speed = 1/6;         % pacman speed (default: 1/6 => pacman eats exactly two coins with every mouth open/close cycle, maximum possible: 1/2)
@@ -383,10 +347,10 @@ pacmanLabyCreator_Fig = figure('Visible','off');
         
         % ugly workaround for focussing on figure after buttonpress (needed
         % for WindowKeyPressFcn to work properly)
-%         set(0,'PointerLocation',screenCenter)
-%         robot = java.awt.Robot;
-%         robot.mousePress(java.awt.event.InputEvent.BUTTON1_MASK);
-%         robot.mouseRelease(java.awt.event.InputEvent.BUTTON1_MASK);
+        %         set(0,'PointerLocation',screenCenter)
+        %         robot = java.awt.Robot;
+        %         robot.mousePress(java.awt.event.InputEvent.BUTTON1_MASK);
+        %         robot.mouseRelease(java.awt.event.InputEvent.BUTTON1_MASK);
         
         newGame
         set(info.text,'Visible','off')
@@ -421,15 +385,17 @@ pacmanLabyCreator_Fig = figure('Visible','off');
         set(coins.plot,'XData',coins.data(:,1),'YData',coins.data(:,2));
     end
     function GameLoop
+        saveCapturedFrame(versao)
         pacmanMoveFun
+        reward = -0.01*max_reward;
         enemyRefresh
         pillsFun
         fruitsFun
         coinsFun
         ghostTimerFun
         reward_history = reward_history + reward;
+        
         versao = versao +1;
-        mem = [mem ; pacman.pos];
     end
     function musicOnOff
         soundsFlag = ~soundsFlag;
@@ -485,7 +451,7 @@ pacmanLabyCreator_Fig = figure('Visible','off');
         ghostMode.status = 0;
         random = randi([1 size(coins.data,1)]);
         pacman.pos = coins.data(random,:);
-%         pacman.pos = [14.5 8];
+        pacman.pos = [14.5 11];
         pacman.dir = 0;
         pacman.oldDir = 1;
         pacman.status = -2;
@@ -718,17 +684,15 @@ pacmanLabyCreator_Fig = figure('Visible','off');
                 set(loadGhostsButton,'Visible','on')
                 set(createLabyButton,'Visible','on')
                 set(showHighScoresButton,'Visible','on')
-                [mem,net_mapa] = updateAndTrain(mem,net_mapa);
                 first_game_over = 1;
                 historico_reward = [historico_reward reward_history];
                 iteracao = [iteracao versao];
                 pontuacao = [pontuacao score.data];
-                save('redes e memoria mapa','net_mapa','net_decisao_1','net_decisao_2')
                 save('Reward history','historico_reward')
                 save('Numero de Iteracoes','iteracao')
                 save('historico de pontuacao','pontuacao')
-                save('state and q_value memory 1','state_memory_1','q_value_memory_1')
-                save('state and q_value memory 2','state_memory_2','q_value_memory_2')
+                net_decisao = treinarRede(net_decisao);
+                save('Rede Decisão','net_decisao')
                 reward_history = 0;
                 versao = 1;
                 newGameButtonFun
